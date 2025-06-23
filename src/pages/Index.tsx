@@ -2,6 +2,7 @@
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import MoodTracker from "@/components/MoodTracker";
+import AIHelper from "@/components/AIHelper";
 import Resources from "@/components/Resources";
 import Contact from "@/components/Contact";
 
@@ -11,6 +12,7 @@ const Index = () => {
       <Hero />
       <About />
       <MoodTracker />
+      <AIHelper />
       <Resources />
       <Contact />
     </div>
