@@ -1,8 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Brain, Heart, Users, BookOpen, Lightbulb, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
+
 
 const LearnMore = () => {
   const topics = [
@@ -55,11 +55,13 @@ const LearnMore = () => {
   const myths = [
     {
       myth: "Mental health problems are a sign of weakness",
-      fact: "Mental health conditions are medical conditions, just like diabetes or heart disease. They're not a character flaw or sign of weakness."
+      fact:
+        "Mental health conditions are medical conditions, just like diabetes or heart disease. They're not a character flaw or sign of weakness."
     },
     {
       myth: "Therapy is only for 'crazy' people",
-      fact: "Therapy is a tool for anyone who wants to improve their mental health, work through challenges, or develop better coping skills."
+      fact:
+        "Therapy is a tool for anyone who wants to improve their mental health, work through challenges, or develop better coping skills."
     },
     {
       myth: "Mental health problems are rare",
@@ -67,7 +69,8 @@ const LearnMore = () => {
     },
     {
       myth: "You can just 'snap out of' depression",
-      fact: "Mental health conditions require proper treatment and support. They can't be overcome through willpower alone."
+      fact:
+        "Mental health conditions require proper treatment and support. They can't be overcome through willpower alone."
     }
   ];
 
@@ -78,8 +81,8 @@ const LearnMore = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <img 
-                src="/lovable-uploads/962bfd35-0dab-4e4c-a024-fea4b4ad7ed9.png" 
+              <img
+                src="/lovable-uploads/962bfd35-0dab-4e4c-a024-fea4b4ad7ed9.png"
                 alt="Kaleidoscope Logo"
                 className="w-8 h-8"
               />
@@ -178,6 +181,7 @@ const LearnMore = () => {
         <div className="container mx-auto px-6">
           <h2 className="text-3xl font-bold text-amber-900 text-center mb-12">Recognizing Warning Signs</h2>
           <div className="grid md:grid-cols-3 gap-8">
+            {/* Emotional */}
             <Card className="bg-white shadow-lg">
               <CardHeader>
                 <CardTitle className="text-xl text-amber-900 flex items-center gap-2">
@@ -196,6 +200,7 @@ const LearnMore = () => {
               </CardContent>
             </Card>
 
+            {/* Physical */}
             <Card className="bg-white shadow-lg">
               <CardHeader>
                 <CardTitle className="text-xl text-amber-900 flex items-center gap-2">
@@ -214,6 +219,7 @@ const LearnMore = () => {
               </CardContent>
             </Card>
 
+            {/* Behavioral */}
             <Card className="bg-white shadow-lg">
               <CardHeader>
                 <CardTitle className="text-xl text-amber-900 flex items-center gap-2">
