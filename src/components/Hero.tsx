@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -35,19 +36,23 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-gradient-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              Find Support
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-amber-500 text-amber-800 hover:bg-amber-50 px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              Learn More
-            </Button>
+            <Link to="/find-support">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
+              >
+                Find Support
+              </Button>
+            </Link>
+            <Link to="/learn-more">
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-amber-500 text-amber-800 hover:bg-amber-50 px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
+              >
+                Learn More
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
