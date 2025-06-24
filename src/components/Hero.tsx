@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -14,15 +15,12 @@ const Hero = () => {
       
       <div className="container mx-auto px-6 text-center relative z-10">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center mb-6">
+          <div className="flex items-center justify-center mb-8">
             <img 
-              src="/lovable-uploads/962bfd35-0dab-4e4c-a024-fea4b4ad7ed9.png" 
-              alt="Kaleidoscope Logo"
-              className="w-16 h-16 mr-4"
+              src="/lovable-uploads/57b8ac86-d316-4567-b417-d00b7fe1129c.png" 
+              alt="Kaleidoscope - Mental Health Support"
+              className="w-32 h-auto max-w-sm mx-auto"
             />
-            <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-stone-700 via-amber-700 to-stone-600 bg-clip-text text-transparent">
-              Kaleidoscope
-            </h1>
           </div>
           
           <p className="text-xl md:text-2xl text-amber-800 mb-8 font-light">
@@ -34,20 +32,26 @@ const Hero = () => {
             We're here to help you see the beauty in every pattern of your journey.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-gradient-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 text-white px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              Find Support
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-amber-500 text-amber-800 hover:bg-amber-50 px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              Learn More
-            </Button>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <Link to="/find-support" className="w-full sm:w-auto">
+              <Button 
+                size="lg" 
+                className="w-full sm:w-auto bg-gradient-to-r from-amber-700 to-orange-700 hover:from-amber-800 hover:to-orange-800 text-white px-10 py-4 text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                aria-label="Find mental health support resources"
+              >
+                Find Support
+              </Button>
+            </Link>
+            <Link to="/learn-more" className="w-full sm:w-auto">
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="w-full sm:w-auto border-2 border-amber-500 text-amber-800 hover:bg-amber-50 px-10 py-4 text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                aria-label="Learn more about mental health"
+              >
+                Learn More
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
