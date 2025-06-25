@@ -1,8 +1,9 @@
+
 # Welcome to my Mental Health Tracker Website
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/6a453ae9-c2a9-4c00-9630-7dae6ec0d749
+**URL**: https://Prajusha2004.dev/projects/6a453ae9-c2a9-4c00-9630-7dae6ec0d749
 
 ## How can I edit this code?
 
