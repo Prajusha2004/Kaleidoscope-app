@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Brain, Send, MessageCircle } from 'lucide-react';
+import { Brain, Send, MessageCircle, Settings } from 'lucide-react';
 import OpenAI from 'openai';
 
 interface Message {
@@ -12,18 +13,22 @@ interface Message {
   timestamp: Date;
 }
 
+type AIProvider = 'openai' | 'gemini';
+
 const AIHelper = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Hello! I'm your AI mental health companion powered by OpenAI. I'm here to listen, provide support, and offer gentle guidance. How are you feeling today?",
+      content: "Hello! I'm your AI mental health companion. I'm here to listen, provide support, and offer gentle guidance. How are you feeling today?",
       isAI: true,
       timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [apiKey, setApiKey] = useState('');
+  const [openaiApiKey, setOpenaiApiKey] = useState('');
+  const [geminiApiKey, setGeminiApiKey] = useState('');
+  const [aiProvider, setAiProvider] = useState<AIProvider>('openai');
   const [showApiKeyInput, setShowApiKeyInput] = useState(true);
 
   const quickPrompts = [
@@ -35,14 +40,14 @@ const AIHelper = () => {
     "I need coping strategies"
   ];
 
-  const generateAIResponse = async (userMessage: string): Promise<string> => {
-    if (!apiKey) {
+  const generateOpenAIResponse = async (userMessage: string): Promise<string> => {
+    if (!openaiApiKey) {
       return "Please provide your OpenAI API key to enable AI responses.";
     }
 
     try {
       const openai = new OpenAI({
-        apiKey: apiKey,
+        apiKey: openaiApiKey,
         dangerouslyAllowBrowser: true
       });
 
@@ -66,6 +71,53 @@ const AIHelper = () => {
     } catch (error) {
       console.error('OpenAI API Error:', error);
       return "I'm having trouble connecting right now. Please check your API key or try again later. In the meantime, remember that professional support is always available if you need immediate help.";
+    }
+  };
+
+  const generateGeminiResponse = async (userMessage: string): Promise<string> => {
+    if (!geminiApiKey) {
+      return "Please provide your Gemini API key to enable AI responses.";
+    }
+
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `You are a compassionate AI mental health companion. Provide supportive, empathetic responses that offer gentle guidance and coping strategies. Always encourage professional help when needed. Keep responses warm, understanding, and helpful. If someone seems in crisis, gently suggest they contact emergency services or a crisis helpline.
+
+User message: ${userMessage}`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 500,
+          }
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+        return data.candidates[0].content.parts[0].text;
+      } else {
+        return "I'm here to listen. Can you tell me more about what you're experiencing?";
+      }
+    } catch (error) {
+      console.error('Gemini API Error:', error);
+      return "I'm having trouble connecting right now. Please check your API key or try again later. In the meantime, remember that professional support is always available if you need immediate help.";
+    }
+  };
+
+  const generateAIResponse = async (userMessage: string): Promise<string> => {
+    if (aiProvider === 'openai') {
+      return generateOpenAIResponse(userMessage);
+    } else {
+      return generateGeminiResponse(userMessage);
     }
   };
 
@@ -112,18 +164,40 @@ const AIHelper = () => {
   };
 
   const handleApiKeySubmit = () => {
-    if (apiKey.trim()) {
+    const currentKey = aiProvider === 'openai' ? openaiApiKey : geminiApiKey;
+    if (currentKey.trim()) {
       setShowApiKeyInput(false);
-      localStorage.setItem('openai_api_key', apiKey);
+      localStorage.setItem(`${aiProvider}_api_key`, currentKey);
     }
   };
 
-  // Load API key from localStorage on component mount
+  const isApiKeyConfigured = () => {
+    return aiProvider === 'openai' ? openaiApiKey.trim() !== '' : geminiApiKey.trim() !== '';
+  };
+
+  // Load API keys from localStorage on component mount
   React.useEffect(() => {
-    const savedApiKey = localStorage.getItem('openai_api_key');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
+    const savedOpenAIKey = localStorage.getItem('openai_api_key');
+    const savedGeminiKey = localStorage.getItem('gemini_api_key');
+    
+    if (savedOpenAIKey) {
+      setOpenaiApiKey(savedOpenAIKey);
+    }
+    if (savedGeminiKey) {
+      setGeminiApiKey(savedGeminiKey);
+    }
+    
+    // Show input if no keys are configured
+    if (!savedOpenAIKey && !savedGeminiKey) {
+      setShowApiKeyInput(true);
+    } else {
       setShowApiKeyInput(false);
+      // Set default provider based on available keys
+      if (savedOpenAIKey) {
+        setAiProvider('openai');
+      } else if (savedGeminiKey) {
+        setAiProvider('gemini');
+      }
     }
   }, []);
 
@@ -135,7 +209,7 @@ const AIHelper = () => {
             AI Mental Health Companion
           </h2>
           <p className="text-xl text-amber-800 max-w-2xl mx-auto">
-            Powered by OpenAI - A supportive AI helper to listen, guide, and provide gentle mental health support
+            Powered by AI - A supportive AI helper to listen, guide, and provide gentle mental health support
           </p>
         </div>
 
@@ -150,14 +224,43 @@ const AIHelper = () => {
               </CardHeader>
               <CardContent className="p-6">
                 <p className="text-amber-800 mb-4">
-                  To use the AI companion, please enter your OpenAI API key. Your key will be stored locally in your browser.
+                  Choose your AI provider and enter the corresponding API key. Your key will be stored locally in your browser.
                 </p>
+                
+                <div className="mb-4">
+                  <label className="text-sm font-medium text-amber-900 mb-2 block">AI Provider</label>
+                  <div className="flex gap-4 mb-4">
+                    <button
+                      onClick={() => setAiProvider('openai')}
+                      className={`px-4 py-2 rounded-lg border ${aiProvider === 'openai' 
+                        ? 'bg-amber-200 border-amber-500 text-amber-900' 
+                        : 'bg-white border-amber-300 text-amber-800 hover:bg-amber-50'}`}
+                    >
+                      OpenAI (GPT-4)
+                    </button>
+                    <button
+                      onClick={() => setAiProvider('gemini')}
+                      className={`px-4 py-2 rounded-lg border ${aiProvider === 'gemini' 
+                        ? 'bg-amber-200 border-amber-500 text-amber-900' 
+                        : 'bg-white border-amber-300 text-amber-800 hover:bg-amber-50'}`}
+                    >
+                      Google Gemini
+                    </button>
+                  </div>
+                </div>
+
                 <div className="flex gap-2">
                   <input
                     type="password"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="Enter your OpenAI API key..."
+                    value={aiProvider === 'openai' ? openaiApiKey : geminiApiKey}
+                    onChange={(e) => {
+                      if (aiProvider === 'openai') {
+                        setOpenaiApiKey(e.target.value);
+                      } else {
+                        setGeminiApiKey(e.target.value);
+                      }
+                    }}
+                    placeholder={`Enter your ${aiProvider === 'openai' ? 'OpenAI' : 'Gemini'} API key...`}
                     className="flex-1 px-4 py-2 border border-amber-300 rounded-lg focus:border-amber-500 bg-white/70"
                   />
                   <Button
@@ -168,7 +271,10 @@ const AIHelper = () => {
                   </Button>
                 </div>
                 <p className="text-xs text-amber-700 mt-2">
-                  Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline">OpenAI Platform</a>
+                  {aiProvider === 'openai' 
+                    ? <>Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline">OpenAI Platform</a></>
+                    : <>Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="underline">Google AI Studio</a></>
+                  }
                 </p>
               </CardContent>
             </Card>
@@ -179,6 +285,9 @@ const AIHelper = () => {
               <CardTitle className="flex items-center gap-3 text-amber-900">
                 <Brain className="w-6 h-6" />
                 Your AI Companion
+                <span className="text-xs bg-amber-100 px-2 py-1 rounded-full">
+                  {aiProvider === 'openai' ? 'OpenAI GPT-4' : 'Google Gemini'}
+                </span>
                 {!showApiKeyInput && (
                   <Button
                     variant="outline"
@@ -186,7 +295,8 @@ const AIHelper = () => {
                     onClick={() => setShowApiKeyInput(true)}
                     className="ml-auto text-xs border-amber-300 text-amber-800 hover:bg-amber-100"
                   >
-                    Change API Key
+                    <Settings className="w-3 h-3 mr-1" />
+                    Settings
                   </Button>
                 )}
               </CardTitle>
@@ -245,7 +355,7 @@ const AIHelper = () => {
                       size="sm"
                       onClick={() => handleQuickPrompt(prompt)}
                       className="border-amber-300 text-amber-800 hover:bg-amber-100 text-xs"
-                      disabled={showApiKeyInput}
+                      disabled={!isApiKeyConfigured()}
                     >
                       {prompt}
                     </Button>
@@ -260,7 +370,7 @@ const AIHelper = () => {
                   onChange={(e) => setInputMessage(e.target.value)}
                   placeholder="Share what's on your mind..."
                   className="border-amber-300 focus:border-amber-500 bg-white/70"
-                  disabled={showApiKeyInput}
+                  disabled={!isApiKeyConfigured()}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
@@ -270,7 +380,7 @@ const AIHelper = () => {
                 />
                 <Button
                   onClick={handleSendMessage}
-                  disabled={!inputMessage.trim() || isLoading || showApiKeyInput}
+                  disabled={!inputMessage.trim() || isLoading || !isApiKeyConfigured()}
                   className="bg-gradient-to-r from-amber-700 to-stone-700 hover:from-amber-800 hover:to-stone-800 text-white self-end"
                 >
                   <Send className="w-4 h-4" />
