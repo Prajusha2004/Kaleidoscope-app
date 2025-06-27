@@ -24,8 +24,8 @@ const AIHelper = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Permanent Gemini API key - replace with your actual key
-  const GEMINI_API_KEY = 'AIzaSyBvQz4K8H9L2M6N3O5P7Q1R3S5T7U9V1W3X5Y7Z'; // Replace with actual key
+ 
+  const GEMINI_API_KEY = 'AIzaSyCFlKJ0hXlLtkp5XybGKPypK_5MWfqiz7s'; 
 
   const quickPrompts = [
     "I'm feeling anxious",
