@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Resources = () => {
   const resources = [
@@ -81,12 +82,24 @@ const Resources = () => {
                     </li>
                   ))}
                 </ul>
-                <Button 
-                  variant={resource.urgent ? "default" : "outline"}
-                  className={resource.urgent ? "bg-red-600 hover:bg-red-700 text-white" : "border-amber-600 text-amber-900 hover:bg-amber-50"}
-                >
-                  {resource.urgent ? "Get Help Now" : "Learn More"}
-                </Button>
+                {resource.urgent ? (
+                  <Link to="/find-support">
+                    <Button 
+                      className="bg-red-600 hover:bg-red-700 text-white w-full"
+                    >
+                      Get Help Now
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/learn-more">
+                    <Button 
+                      variant="outline"
+                      className="border-amber-600 text-amber-900 hover:bg-amber-50 w-full"
+                    >
+                      Learn More
+                    </Button>
+                  </Link>
+                )}
               </CardContent>
             </Card>
           ))}
